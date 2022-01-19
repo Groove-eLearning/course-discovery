@@ -64,6 +64,11 @@ class ProgramDocument(BaseDocument, OrganizationsMixin):
     )
     weeks_to_complete_min = fields.IntegerField()
     weeks_to_complete_max = fields.IntegerField()
+    program_types = fields.KeywordField(multi=True)
+    org_key = fields.KeywordField(multi=True)
+    course_count = fields.IntegerField()
+    # This is_archived used for only by pass searching, like is_archived for CourseRun
+    is_archived = fields.BooleanField()
 
     def prepare_aggregation_key(self, obj):
         return 'program:{}'.format(obj.uuid)
@@ -102,6 +107,18 @@ class ProgramDocument(BaseDocument, OrganizationsMixin):
 
     def prepare_type(self, obj):
         return obj.type.name_t
+
+    def prepare_program_types(self, obj):
+        return obj.type.name_t
+    
+    def prepare_org_key(self, obj):
+        return [item.split(':')[0] for item in self.prepare_authoring_organizations(obj)]
+
+    def prepare_course_count(self, obj):
+        return len(obj.courses.all())
+
+    def prepare_is_archived(self, obj):
+        return False
 
     def get_queryset(self):
         return super().get_queryset().select_related('type').select_related('partner')

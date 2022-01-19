@@ -46,6 +46,10 @@ class ProgramSearchDocumentSerializer(DocumentSerializer):
                 'weeks_to_complete_max',
                 'weeks_to_complete_min',
                 'search_card_display',
+                'program_types',
+                'org_key',
+                'course_count',
+                'is_archived',
             )
         )
 

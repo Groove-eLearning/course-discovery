@@ -4,7 +4,7 @@ from django.conf import settings
 from django.db.models import Q as DQ
 from django_elasticsearch_dsl_drf.constants import (
     LOOKUP_FILTER_RANGE, LOOKUP_FILTER_TERM, LOOKUP_FILTER_TERMS, LOOKUP_QUERY_EXCLUDE, LOOKUP_QUERY_GT,
-    LOOKUP_QUERY_GTE, LOOKUP_QUERY_IN, LOOKUP_QUERY_LT, LOOKUP_QUERY_LTE
+    LOOKUP_QUERY_GTE, LOOKUP_QUERY_IN, LOOKUP_QUERY_LT, LOOKUP_QUERY_LTE, LOOKUP_FILTER_EXISTS
 )
 from django_elasticsearch_dsl_drf.filter_backends import DefaultOrderingFilterBackend, OrderingFilterBackend
 from elasticsearch_dsl.query import Q as ESDSLQ
@@ -172,6 +172,7 @@ class BaseAggregateSearchViewSet(FacetQueryFieldsMixin, BaseElasticsearchDocumen
         'status': {'field': 'status', 'enabled': True},
         'transcript_languages': {'field': 'transcript_languages.raw', 'enabled': True},
         'type': {'field': 'type.raw', 'enabled': True},
+        'program_types': {'field': 'program_types', 'enabled': True},
     }
     filter_fields = {
         'aggregation_key': {
@@ -230,6 +231,10 @@ class BaseAggregateSearchViewSet(FacetQueryFieldsMixin, BaseElasticsearchDocumen
         },
         'subject_uuids': {'field': 'subject_uuids', 'lookups': [LOOKUP_FILTER_TERM, LOOKUP_FILTER_TERMS]},
         'type': {'field': 'type.lower', 'lookups': [LOOKUP_FILTER_TERM]},
+        'seat_types': {'field': 'seat_types', 'lookups': [LOOKUP_FILTER_TERMS]},
+        'program_types': {'field': 'program_types', 'lookups': [LOOKUP_FILTER_TERMS]},
+        'org_key': {'field': 'org_key', 'lookups': [LOOKUP_FILTER_TERMS]},
+        'is_archived': {'field': 'is_archived', 'lookups': [LOOKUP_FILTER_EXISTS]},
     }
     ordering_fields = {'start': 'start', 'aggregation_key': 'aggregation_key'}
 
