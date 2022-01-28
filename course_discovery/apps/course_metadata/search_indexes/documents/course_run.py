@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.conf import settings
 from django_elasticsearch_dsl import Index, fields
 from opaque_keys.edx.keys import CourseKey
@@ -76,6 +77,8 @@ class CourseRunDocument(BaseCourseDocument):
         analyzer=html_strip, fields={'raw': fields.KeywordField(multi=True)}, multi=True
     )
     weeks_to_complete = fields.IntegerField()
+    org_key = fields.KeywordField()
+    is_archived = fields.BooleanField()
 
     def prepare_aggregation_key(self, obj):
         # Aggregate CourseRuns by Course key since that is how we plan to dedup CourseRuns on the marketing site.
@@ -131,6 +134,15 @@ class CourseRunDocument(BaseCourseDocument):
             self._prepare_language(language)
             for language in obj.transcript_languages.all()
         ]
+
+    def prepare_org_key(self, obj):
+        course_run_key = CourseKey.from_string(obj.key)
+        return course_run_key.org
+
+    def prepare_is_archived(self, obj):
+        if obj.end:
+            return obj.end.date() < datetime.now().date()
+        return False
 
     def get_queryset(self):
         return filter_visible_runs(

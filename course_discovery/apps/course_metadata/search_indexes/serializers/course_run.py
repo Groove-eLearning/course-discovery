@@ -89,6 +89,9 @@ class CourseRunSearchDocumentSerializer(DateTimeSerializerMixin, DocumentSeriali
             'transcript_languages',
             'type',
             'weeks_to_complete',
+            'organizations',
+            'org_key',
+            'is_archived',
         )
 
 
